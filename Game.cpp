@@ -175,6 +175,7 @@ void Game::GameLoop()
 				jump = true;
 			}
 		}
+
 		if (hjump == 300) {
 			jump = false;
 			hjump = 0;

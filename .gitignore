@@ -3,3 +3,8 @@
 ################################################################################
 
 *.dll
+/Debug/SFML.tlog
+/Debug
+/Release/SFML.tlog
+/Release
+/sprites
