@@ -40,6 +40,13 @@ public:
 		_attack = 0;
 		_def = 0;
 	}
+
+	void Init(string _name, float healht, float attack, float def) {
+		name = _name;
+		_healht = healht;
+		_attack = attack;
+		_def = def;
+	}
 private:
 	AnimationManager *animations;
 	string name;

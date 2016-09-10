@@ -76,9 +76,12 @@ void Game::GameLoop()
 	bool onGround = false;
 	bool jump = false;
 	int hjump = 0;
+
+	Entity hero;
+	hero.bindAnimation(&anim);
+	hero.Init("Ihicgo", 100, 2, 30);
 	while (window.isOpen())
 	{
-		
 		float time = clock.getElapsedTime().asMicroseconds();
 		float time2 = grav.getElapsedTime().asSeconds();
 		clock.restart();
