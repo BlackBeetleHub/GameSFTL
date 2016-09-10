@@ -1,8 +1,12 @@
 #pragma once
-class GameActor
+#include"Entity.h"
+
+class GameActor: public Entity
 {
 public:
 	GameActor();
 	~GameActor();
+private:
+	
 };
 
