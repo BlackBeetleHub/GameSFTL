@@ -25,10 +25,14 @@ void Animation::create(Texture &texture, vector<IntRect> rects, float speed) {
 	countFrames = rects.size();
 	this->speed = speed;
 	flip = false;
-	for (int i = 0; i <= countFrames; i++) {
-		frames_flip.push_back( IntRect(rects[i].left +
-			rects[i].width, rects[i].top, -rects[i].width, rects[i].height));
-	}
+	
+		for (int i = 0; i < countFrames; i++) {
+			printf("adad\n");
+			frames_flip.push_back(IntRect(rects[i].left +
+				rects[i].width, rects[i].top, -rects[i].width, rects[i].height));
+		}
+		//printf("create error?");
+		
 }
 
 Animation::~Animation()

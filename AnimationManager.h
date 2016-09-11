@@ -11,7 +11,10 @@ public:
 	void create(string name, Texture &texture, vector<IntRect> rects, float speed);
 	void setAnim(string name) { currentAnimation = name; }
 	void draw(RenderWindow &win, int x, int y);
-	void tick(float time) { animation[currentAnimation].tick(time); }
+	void tick(float time) { 
+
+		animation[currentAnimation].tick(time);
+	}
 	void set(string nameAnimation) {
 		currentAnimation = nameAnimation;
 	}

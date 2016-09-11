@@ -18,11 +18,16 @@ Game::~Game()
 
 void Game::GameLoop()
 {
+	b2Vec2 Gravity(0.f, 9.8f);
+	b2World World(Gravity);
+	//window.setFramerateLimit(70);
+
 	Object obj1;
 	Object obj2;
 	Object obj3;
 	Object obj4;
 	Texture objtext;
+	objtext.setSmooth(true);
 	if (!objtext.loadFromFile("sprites/terra/terra_platform.png")) {
 		printf("error\n");
 	}
@@ -39,13 +44,16 @@ void Game::GameLoop()
 	obj2.create(&objtext, 95, 0, 161, 25, 200 , 600);
 	obj3.create(&objtext, 95, 0, 161, 25 , 600 , 200);
 	obj4.create(&objtext, 95, 0, 161, 25, 1000, 600);
+	
 	LvlWorld world;
 	world.AddObject(obj1);
 	world.AddObject(obj2);
 	world.AddObject(obj3);
 	world.AddObject(obj4);
+	
 	AnimationManager anim;
 	Texture text;
+	text.setSmooth(true);
 	if (!text.loadFromFile("sprites/evil/hero.png")) {
 		printf("error\n");
 	}
@@ -61,11 +69,13 @@ void Game::GameLoop()
 	n.push_back(IntRect(3, 80, 54, 48));
 	n.push_back(IntRect(69, 80, 52, 48));
 	n.push_back(IntRect(128,81,61,46));
+	/**///////////////////////////////
 	anim.create("Attack", text, attack, 0.004);
 	anim.create("Walk", text, n, 0.002);
 	anim.create("Stay", text, stay, 0.002);
 	anim.set("Stay");
 	anim.play();
+/////////////////////////
 	//std::cout << stay.size() << std::endl;
 	int x, y;
 	x = y = 200;
@@ -76,7 +86,7 @@ void Game::GameLoop()
 	bool onGround = false;
 	bool jump = false;
 	int hjump = 0;
-
+	
 	Entity hero;
 	hero.bindAnimation(&anim);
 	hero.Init("Ihicgo", 100, 2, 30);
@@ -88,6 +98,7 @@ void Game::GameLoop()
 		Event even;
 		time = time / 800;
 		std::cout << time << endl;
+
 		if (time > 20) {
 			time = 20;
 		}
@@ -111,6 +122,7 @@ void Game::GameLoop()
 				grav.restart();
 			}
 		}
+		
 		if (y > 700) {
 			y -= 5;
 			onGround = true;
@@ -131,6 +143,7 @@ void Game::GameLoop()
 				window.close();
 		}
 		anim.set("Stay");
+		
 		if (Keyboard::isKeyPressed(Keyboard::D)) {
 			anim.set("Stay");
 			anim.flip(false);
@@ -138,6 +151,7 @@ void Game::GameLoop()
 			anim.flip(false);
 			x += 1;
 		}
+	
 		if (Keyboard::isKeyPressed(Keyboard::D) && Keyboard::isKeyPressed(Keyboard::LShift)) {
 			anim.set("Stay");
 			anim.flip(false);
@@ -194,10 +208,15 @@ void Game::GameLoop()
 		}
 	
 		window.draw(fon);
+		
 		world.draw(window);
+		
 		anim.draw(window, x, y);
+		/////error!
 		anim.tick(time);
+		/////error!
 		window.display();
 		window.clear(Color(255,255,255));
 	}
+	
 }
