@@ -1,5 +1,9 @@
 #include "Game.h"
 
+float const SCALE = 30.f;
+const float DEG = 57.29577f;
+b2Vec2 Gravity(0.f, 9.8f);
+b2World World(Gravity);
 
 Game::Game()
 {
@@ -11,17 +15,21 @@ void Game::run()
 	GameLoop();
 }
 
-
 Game::~Game()
 {
 }
 
+void setWall(int x, int y, int w, int h) {
+	b2PolygonShape shape;
+	shape.SetAsBox(w/2,h/2);
+	b2BodyDef bdef;
+	bdef.position.Set(x + w/2, y + h/2);
+	b2Body *body = World.CreateBody(&bdef);
+	body->CreateFixture(&shape, 1);
+}
+
 void Game::GameLoop()
 {
-	b2Vec2 Gravity(0.f, 9.8f);
-	b2World World(Gravity);
-	//window.setFramerateLimit(70);
-
 	Object obj1;
 	Object obj2;
 	Object obj3;
@@ -31,7 +39,6 @@ void Game::GameLoop()
 	if (!objtext.loadFromFile("sprites/terra/terra_platform.png")) {
 		printf("error\n");
 	}
-
 	Texture fontext;
 	if (!fontext.loadFromFile("sprites/terra/fon.jpg")) {
 		printf("error\n");
@@ -44,13 +51,19 @@ void Game::GameLoop()
 	obj2.create(&objtext, 95, 0, 161, 25, 200 , 600);
 	obj3.create(&objtext, 95, 0, 161, 25 , 600 , 200);
 	obj4.create(&objtext, 95, 0, 161, 25, 1000, 600);
-	
+	setWall(400, 400, 161, 25);
+	setWall(200, 600, 161, 25);
+	setWall(600, 200, 161, 25);
+	setWall(1000, 600, 161, 25);
+	setWall(0, 0, 1, 768);
+	setWall(0, 768, 1366, 1);
+	setWall(0, 0, 1366, 1);
+	setWall(1366, 0, 1, 768);
 	LvlWorld world;
 	world.AddObject(obj1);
 	world.AddObject(obj2);
 	world.AddObject(obj3);
 	world.AddObject(obj4);
-	
 	AnimationManager anim;
 	Texture text;
 	text.setSmooth(true);
@@ -69,89 +82,64 @@ void Game::GameLoop()
 	n.push_back(IntRect(3, 80, 54, 48));
 	n.push_back(IntRect(69, 80, 52, 48));
 	n.push_back(IntRect(128,81,61,46));
-	/**///////////////////////////////
 	anim.create("Attack", text, attack, 0.004);
 	anim.create("Walk", text, n, 0.002);
 	anim.create("Stay", text, stay, 0.002);
 	anim.set("Stay");
-	anim.play();
-/////////////////////////
-	//std::cout << stay.size() << std::endl;
+	anim.play();;
 	int x, y;
-	x = y = 200;
+	x = 400;
+	y = 200;
 	Clock clock;
-	bool ModeFly = false;
 	bool flip = false;
-	Clock grav;
-	bool onGround = false;
-	bool jump = false;
-	int hjump = 0;
-	
+	b2PolygonShape shape;
+	shape.SetAsBox(20 , 30);
+	b2BodyDef bdef;
+	bdef.type = b2_dynamicBody;
+	bdef.position.Set(x + 20 , y + 30);
+	b2Body *pbody = World.CreateBody(&bdef);
+	pbody->CreateFixture(&shape, 1);
+	pbody->SetUserData("player");
 	Entity hero;
 	hero.bindAnimation(&anim);
 	hero.Init("Ihicgo", 100, 2, 30);
 	while (window.isOpen())
 	{
+		sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+		sf::Font font;
+		font.loadFromFile("arial.ttf");
+		// Create a text
+		string content;
+		content.append(to_string(localPosition.x));
+		content.append(" ");
+		content.append(to_string(localPosition.y));
+		sf::Text textte(content, font);
+		textte.setCharacterSize(30);
+		textte.setStyle(sf::Text::Bold);
+		textte.setColor(sf::Color::Red);
+		textte.setPosition(800, 10);
+		
 		float time = clock.getElapsedTime().asMicroseconds();
-		float time2 = grav.getElapsedTime().asSeconds();
 		clock.restart();
 		Event even;
 		time = time / 800;
-		std::cout << time << endl;
-
 		if (time > 20) {
 			time = 20;
-		}
-		if (ModeFly) {
-			onGround = false;
-			//y += 1*time;
-		}
-		if (!onGround && !ModeFly) {
-			y = y + 2 * time2 * time2 / 2;
-		}
-
-		onGround = false;
-		for (int i = 0; i < world.terra.size(); i++) {
-			int dy = world.terra[i].sprite.getPosition().y;
-			int dx = world.terra[i].sprite.getPosition().x;
-			int w = world.terra[i].sprite.getTextureRect().width;
-			int h = world.terra[i].sprite.getTextureRect().height;
-			if (y + 55 >= dy && y <= dy + world.terra[i].hight && dy + h > y + 55 && x + 50 > dx && x < dx + w) {
-				y -= 1;
-				onGround = true;
-				grav.restart();
-			}
-		}
-		
-		if (y > 700) {
-			y -= 5;
-			onGround = true;
-			grav.restart();
-		}
-		if (y < 0) {
-			y += 5;
-		}
-		if (x < 0) {
-			x += 5;
-		}
-		if (x > 1300) {
-			x -= 5;
 		}
 		while (window.pollEvent(even))
 		{
 			if (even.type == Event::Closed)
 				window.close();
 		}
+		World.Step(1 / 60.f, 8, 3);
 		anim.set("Stay");
-		
 		if (Keyboard::isKeyPressed(Keyboard::D)) {
 			anim.set("Stay");
 			anim.flip(false);
 			anim.set("Walk");
 			anim.flip(false);
-			x += 1;
+			pbody->ApplyLinearImpulse(b2Vec2(1000, 0), pbody->GetWorldCenter(), true);
 		}
-	
 		if (Keyboard::isKeyPressed(Keyboard::D) && Keyboard::isKeyPressed(Keyboard::LShift)) {
 			anim.set("Stay");
 			anim.flip(false);
@@ -160,20 +148,13 @@ void Game::GameLoop()
 			x += 5;
 		}
 		if (Keyboard::isKeyPressed(Keyboard::F)) {
-			if (!ModeFly) {
-				ModeFly = true;
-			}
-			else {
-				ModeFly = false;
-				grav.restart();
-			}
 		}
 		if (Keyboard::isKeyPressed(Keyboard::A)) {
 			anim.set("Stay");
 			anim.flip(true);
 			anim.set("Walk");
 			anim.flip(true);
-			x--;
+			pbody->ApplyLinearImpulse(b2Vec2(-1000, 0), pbody->GetWorldCenter(), true);
 		}
 		if (Keyboard::isKeyPressed(Keyboard::E)) {
 			anim.set("Attack");
@@ -188,35 +169,25 @@ void Game::GameLoop()
 
 		if (Keyboard::isKeyPressed(Keyboard::W)) {
 			anim.set("Walk");
-			if(!jump){
-				jump = true;
-			}
+			pbody->ApplyLinearImpulse(b2Vec2(0, -9000), pbody->GetWorldCenter(), true);
 		}
 
-		if (hjump == 300) {
-			jump = false;
-			hjump = 0;
-		}
-		if (jump) {
-			y--;
-			hjump++;
-				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		}
 		if (Keyboard::isKeyPressed(Keyboard::S)) {
 			anim.set("Walk");
 			y++;
 		}
-	
 		window.draw(fon);
-		
 		world.draw(window);
-		
-		anim.draw(window, x, y);
-		/////error!
 		anim.tick(time);
-		/////error!
+		for (b2Body* it = World.GetBodyList(); it != 0; it = it->GetNext()) {
+			if (it->GetUserData() == "player") {
+				b2Vec2 pos = it->GetPosition();
+				//std::cout << pos.x << " " << pos.y << " \n";
+				anim.draw(window, pos.x - 20 , pos.y -30);
+			}
+		}
+		window.draw(textte);
 		window.display();
 		window.clear(Color(255,255,255));
 	}
-	
 }
