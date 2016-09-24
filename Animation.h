@@ -17,16 +17,12 @@ public:
 		if (currentFrame > countFrames || currentFrame == countFrames || currentFrame < 0) {
 			currentFrame = 0;
 		}
-		
 		int i = currentFrame;
 		if (flip) {
 			sprite.setTextureRect(frames_flip[i]);
 		}
 		else {
-			//printf("LOOp");
-			//std::cout << i << std::endl;
 			sprite.setTextureRect(frames[i]);
-			
 		}
 	}
 	~Animation();

@@ -18,7 +18,9 @@ class LvlWorld
 public:
 	LvlWorld();
 	~LvlWorld();
+	void scrool(int x, int y);
 	void draw(sf::RenderWindow &window);
+	void draw(sf::RenderWindow & window, float offx, float offy);
 	bool AddObject(Object obj);
 	std::vector<Object> terra;
 private:

@@ -5,9 +5,28 @@ const float DEG = 57.29577f;
 b2Vec2 Gravity(0.f, 9.8f);
 b2World World(Gravity);
 
+View view;
+
+
+
+float offsetx = 0;
+float offsety = 0;
+
+void scrool(int x, int y) {
+	for (b2Body* body = World.GetBodyList(); body != 0; body = body->GetNext()) {
+		if (body->GetUserData() != "player") {
+			b2Vec2 position = body->GetPosition();
+			body->SetTransform(b2Vec2( x,   y),0);
+		}
+	}
+	
+}
+
 Game::Game()
 {
 }
+
+
 
 void Game::run()
 {
@@ -55,10 +74,10 @@ void Game::GameLoop()
 	setWall(200, 600, 161, 25);
 	setWall(600, 200, 161, 25);
 	setWall(1000, 600, 161, 25);
-	setWall(0, 0, 1, 768);
+	//setWall(0, 0, 1, 768);
 	setWall(0, 768, 1366, 1);
 	setWall(0, 0, 1366, 1);
-	setWall(1366, 0, 1, 768);
+	//setWall(1366, 0, 1, 768);
 	LvlWorld world;
 	world.AddObject(obj1);
 	world.AddObject(obj2);
@@ -103,22 +122,23 @@ void Game::GameLoop()
 	Entity hero;
 	hero.bindAnimation(&anim);
 	hero.Init("Ihicgo", 100, 2, 30);
+	sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+	sf::Font font;
+	font.loadFromFile("arial.ttf");
+	// Create a text
+	//view.reset(sf::FloatRect(0, 0, 1366, 768));
+	string content;
+	content.append(to_string(localPosition.x));
+	content.append(" ");
+	content.append(to_string(localPosition.y));
+	sf::Text textte(content, font);
+	textte.setCharacterSize(30);
+	textte.setStyle(sf::Text::Bold);
+	textte.setColor(sf::Color::Red);
+	textte.setPosition(800, 10);
+	
 	while (window.isOpen())
 	{
-		sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-		sf::Font font;
-		font.loadFromFile("arial.ttf");
-		// Create a text
-		string content;
-		content.append(to_string(localPosition.x));
-		content.append(" ");
-		content.append(to_string(localPosition.y));
-		sf::Text textte(content, font);
-		textte.setCharacterSize(30);
-		textte.setStyle(sf::Text::Bold);
-		textte.setColor(sf::Color::Red);
-		textte.setPosition(800, 10);
-		
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 		Event even;
@@ -139,6 +159,7 @@ void Game::GameLoop()
 			anim.set("Walk");
 			anim.flip(false);
 			pbody->ApplyLinearImpulse(b2Vec2(1000, 0), pbody->GetWorldCenter(), true);
+			//world.scrool(-5, 0);
 		}
 		if (Keyboard::isKeyPressed(Keyboard::D) && Keyboard::isKeyPressed(Keyboard::LShift)) {
 			anim.set("Stay");
@@ -155,6 +176,8 @@ void Game::GameLoop()
 			anim.set("Walk");
 			anim.flip(true);
 			pbody->ApplyLinearImpulse(b2Vec2(-1000, 0), pbody->GetWorldCenter(), true);
+			//world.scrool(5, 0);
+			//scrool(-1, 0);
 		}
 		if (Keyboard::isKeyPressed(Keyboard::E)) {
 			anim.set("Attack");
@@ -170,23 +193,27 @@ void Game::GameLoop()
 		if (Keyboard::isKeyPressed(Keyboard::W)) {
 			anim.set("Walk");
 			pbody->ApplyLinearImpulse(b2Vec2(0, -9000), pbody->GetWorldCenter(), true);
+			//world.scrool(0, -5);
 		}
 
 		if (Keyboard::isKeyPressed(Keyboard::S)) {
 			anim.set("Walk");
 			y++;
 		}
+		;
+		offsetx = pbody->GetPosition().x;
+		offsety = pbody->GetPosition().y;
 		window.draw(fon);
-		world.draw(window);
+		world.draw(window , offsetx - 600, offsety - 300);
 		anim.tick(time);
 		for (b2Body* it = World.GetBodyList(); it != 0; it = it->GetNext()) {
 			if (it->GetUserData() == "player") {
 				b2Vec2 pos = it->GetPosition();
-				//std::cout << pos.x << " " << pos.y << " \n";
-				anim.draw(window, pos.x - 20 , pos.y -30);
+				anim.draw(window, pos.x - 20 - offsetx + 500, pos.y -30 - offsety + 500);
 			}
 		}
 		window.draw(textte);
+		
 		window.display();
 		window.clear(Color(255,255,255));
 	}
