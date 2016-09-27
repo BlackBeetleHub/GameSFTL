@@ -9,7 +9,7 @@ Animation::Animation()
 void Animation::create(Texture &texture, int x, int y, int wight, int higth, int count, int countFrames, int speed)
 {
 	sprite.setTexture(texture);
-	this->speed = speed;
+	this->speed = static_cast<float>(speed);
 	this->countFrames = countFrames;
 	currentFrame = 0;
 	flip = false;

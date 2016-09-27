@@ -5,6 +5,8 @@
 #include"Entity.h"
 #include<iostream>
 #include"Box2D\Box2D.h"
+#include"CommandManager.h"
+
 
 using namespace sf;
 

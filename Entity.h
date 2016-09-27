@@ -1,15 +1,13 @@
 #pragma once
 #include"AnimationManager.h"
+#include"Box2D\Box2D.h"
 
 class Entity
 {
 public:
 	Entity();
 	~Entity();
-	int _x;
-	int _y;
-	int _width;
-	int _hight;
+
 
 	string setName(string value) {
 		name = value;
@@ -20,7 +18,7 @@ public:
 	}
 
 	void getDamage(float damage) {
-		float clear_damage = damage - damage*_def*0.01;
+		float clear_damage = damage - damage*_def*0.01f;
 		_healht = _healht - (clear_damage);
 	}
 
@@ -47,11 +45,20 @@ public:
 		_attack = attack;
 		_def = def;
 	}
-private:
 	AnimationManager *animations;
+	b2Body *body;
+	int _x;
+	int _y;
+	int _width;
+	int _hight;
+private:
 	string name;
 	float _healht;
 	float _attack;
 	float _def;
 };
 
+struct MyStruct
+{
+	virtual void add() = 0;
+};

@@ -5,28 +5,12 @@ const float DEG = 57.29577f;
 b2Vec2 Gravity(0.f, 9.8f);
 b2World World(Gravity);
 
-View view;
-
-
-
 float offsetx = 0;
 float offsety = 0;
-
-void scrool(int x, int y) {
-	for (b2Body* body = World.GetBodyList(); body != 0; body = body->GetNext()) {
-		if (body->GetUserData() != "player") {
-			b2Vec2 position = body->GetPosition();
-			body->SetTransform(b2Vec2( x,   y),0);
-		}
-	}
-	
-}
 
 Game::Game()
 {
 }
-
-
 
 void Game::run()
 {
@@ -40,9 +24,9 @@ Game::~Game()
 
 void setWall(int x, int y, int w, int h) {
 	b2PolygonShape shape;
-	shape.SetAsBox(w/2,h/2);
+	shape.SetAsBox(static_cast<float32>(w/2), static_cast<float32>(h/2));
 	b2BodyDef bdef;
-	bdef.position.Set(x + w/2, y + h/2);
+	bdef.position.Set(static_cast<float32>(x + w/2), static_cast<float32>(y + h/2));
 	b2Body *body = World.CreateBody(&bdef);
 	body->CreateFixture(&shape, 1);
 }
@@ -75,8 +59,8 @@ void Game::GameLoop()
 	setWall(600, 200, 161, 25);
 	setWall(1000, 600, 161, 25);
 	//setWall(0, 0, 1, 768);
-	setWall(0, 768, 1366, 1);
-	setWall(0, 0, 1366, 1);
+	setWall(0, 768, 13660, 1);
+	setWall(0, 0, 13660, 1);
 	//setWall(1366, 0, 1, 768);
 	LvlWorld world;
 	world.AddObject(obj1);
@@ -101,9 +85,9 @@ void Game::GameLoop()
 	n.push_back(IntRect(3, 80, 54, 48));
 	n.push_back(IntRect(69, 80, 52, 48));
 	n.push_back(IntRect(128,81,61,46));
-	anim.create("Attack", text, attack, 0.004);
-	anim.create("Walk", text, n, 0.002);
-	anim.create("Stay", text, stay, 0.002);
+	anim.create("Attack", text, attack, 0.004f);
+	anim.create("Walk", text, n, 0.002f);
+	anim.create("Stay", text, stay, 0.002f);
 	anim.set("Stay");
 	anim.play();;
 	int x, y;
@@ -119,27 +103,15 @@ void Game::GameLoop()
 	b2Body *pbody = World.CreateBody(&bdef);
 	pbody->CreateFixture(&shape, 1);
 	pbody->SetUserData("player");
-	Entity hero;
-	hero.bindAnimation(&anim);
-	hero.Init("Ihicgo", 100, 2, 30);
-	sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-	sf::Font font;
-	font.loadFromFile("arial.ttf");
-	// Create a text
-	//view.reset(sf::FloatRect(0, 0, 1366, 768));
-	string content;
-	content.append(to_string(localPosition.x));
-	content.append(" ");
-	content.append(to_string(localPosition.y));
-	sf::Text textte(content, font);
-	textte.setCharacterSize(30);
-	textte.setStyle(sf::Text::Bold);
-	textte.setColor(sf::Color::Red);
-	textte.setPosition(800, 10);
-	
+	JumpCommand *jump = new JumpCommand();
+	InputHandler inputHandler;
+	inputHandler.bindButtonA(jump);
+	inputHandler.bindButtonD(jump);
+	inputHandler.bindButtonW(jump);
+	inputHandler.bindButtonS(jump);
 	while (window.isOpen())
 	{
-		float time = clock.getElapsedTime().asMicroseconds();
+		float time = static_cast<float>(clock.getElapsedTime().asMicroseconds());
 		clock.restart();
 		Event even;
 		time = time / 800;
@@ -200,20 +172,21 @@ void Game::GameLoop()
 			anim.set("Walk");
 			y++;
 		}
-		;
+		Command* command = inputHandler.handleInput();
+		if (command) {
+			command->execute(GameActor());
+		}
 		offsetx = pbody->GetPosition().x;
 		offsety = pbody->GetPosition().y;
 		window.draw(fon);
-		world.draw(window , offsetx - 600, offsety - 300);
+		world.draw(window , offsetx - 500, offsety -500);
 		anim.tick(time);
 		for (b2Body* it = World.GetBodyList(); it != 0; it = it->GetNext()) {
 			if (it->GetUserData() == "player") {
 				b2Vec2 pos = it->GetPosition();
-				anim.draw(window, pos.x - 20 - offsetx + 500, pos.y -30 - offsety + 500);
+				anim.draw(window, (int)pos.x - 20 - offsetx + 500, (int)pos.y -30 - offsety + 500);
 			}
 		}
-		window.draw(textte);
-		
 		window.display();
 		window.clear(Color(255,255,255));
 	}

@@ -17,7 +17,7 @@ public:
 		if (currentFrame > countFrames || currentFrame == countFrames || currentFrame < 0) {
 			currentFrame = 0;
 		}
-		int i = currentFrame;
+		int i = static_cast<int>(currentFrame);
 		if (flip) {
 			sprite.setTextureRect(frames_flip[i]);
 		}

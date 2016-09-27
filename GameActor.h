@@ -4,6 +4,7 @@
 class GameActor: public Entity
 {
 public:
+
 	GameActor();
 	~GameActor();
 private:
