@@ -89,20 +89,8 @@ void Game::GameLoop()
 	anim.create("Walk", text, n, 0.002f);
 	anim.create("Stay", text, stay, 0.002f);
 	anim.set("Stay");
-	anim.play();;
-	int x, y;
-	x = 400;
-	y = 200;
+	anim.play();
 	Clock clock;
-	/*bool flip = false;
-	b2PolygonShape shape;
-	shape.SetAsBox(20 , 30);
-	b2BodyDef bdef;
-	bdef.type = b2_dynamicBody;
-	bdef.position.Set(x + 20 , y + 30);
-	b2Body *pbody = World.CreateBody(&bdef);
-	pbody->CreateFixture(&shape, 1);
-	pbody->SetUserData("player");*/
 	GameActor player;
 	player.create(200,200,40,60,100,10,10,&World,&anim);
 	JumpCommand *jump = new JumpCommand();
@@ -126,67 +114,16 @@ void Game::GameLoop()
 				window.close();
 		}
 		World.Step(1 / 60.f, 8, 3);
-		anim.set("Stay");
-		if (Keyboard::isKeyPressed(Keyboard::D)) {
-			anim.set("Stay");
-			anim.flip(false);
-			anim.set("Walk");
-			anim.flip(false);
-			pbody->ApplyLinearImpulse(b2Vec2(1000, 0), pbody->GetWorldCenter(), true);
-			//world.scrool(-5, 0);
-		}
-		if (Keyboard::isKeyPressed(Keyboard::D) && Keyboard::isKeyPressed(Keyboard::LShift)) {
-			anim.set("Stay");
-			anim.flip(false);
-			anim.set("Walk");
-			anim.flip(false);
-			x += 5;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::F)) {
-		}
-		if (Keyboard::isKeyPressed(Keyboard::A)) {
-			anim.set("Stay");
-			anim.flip(true);
-			anim.set("Walk");
-			anim.flip(true);
-			pbody->ApplyLinearImpulse(b2Vec2(-1000, 0), pbody->GetWorldCenter(), true);
-			//world.scrool(5, 0);
-			//scrool(-1, 0);
-		}
-		if (Keyboard::isKeyPressed(Keyboard::E)) {
-			anim.set("Attack");
-		}
-		if (Keyboard::isKeyPressed(Keyboard::A) && Keyboard::isKeyPressed(Keyboard::LShift)) {
-			anim.set("Stay");
-			anim.flip(true);
-			anim.set("Walk");
-			anim.flip(true);
-			x -= 5;
-		}
-
-		if (Keyboard::isKeyPressed(Keyboard::W)) {
-			anim.set("Walk");
-			pbody->ApplyLinearImpulse(b2Vec2(0, -9000), pbody->GetWorldCenter(), true);
-			//world.scrool(0, -5);
-		}
-
-		if (Keyboard::isKeyPressed(Keyboard::S)) {
-			anim.set("Walk");
-			y++;
-		}
 		Command* command = inputHandler.handleInput();
 		if (command) {
-			command->execute(GameActor());
+			command->execute(player);
 		}
-		offsetx = pbody->GetPosition().x;
-		offsety = pbody->GetPosition().y;
 		window.draw(fon);
 		world.draw(window , offsetx - 500, offsety -500);
 		anim.tick(time);
 		for (b2Body* it = World.GetBodyList(); it != 0; it = it->GetNext()) {
-			if (it->GetUserData() == "player") {
-				b2Vec2 pos = it->GetPosition();
-				anim.draw(window, (int)pos.x - 20 - offsetx + 500, (int)pos.y -30 - offsety + 500);
+			if (it->GetUserData() == "Player") {
+				player.draw(window);
 			}
 		}
 		window.display();
