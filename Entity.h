@@ -8,13 +8,34 @@ public:
 	Entity();
 	~Entity();
 
-
-	string setName(string value) {
-		name = value;
+	string getName() {
+		return name;
 	}
 
-	void setAnimation(string name) {
-		animations->set(name);
+	virtual void MoveLeft(int value) {
+		if (!flip) {
+			AllFlip(true);
+		}
+		setAnimation("Walk");
+		body->ApplyLinearImpulse(b2Vec2(value, 0), body->GetWorldCenter(), true);
+	}
+
+	virtual void MoveRight(int value) {
+		if (flip) {
+			AllFlip(false);
+		}
+		setAnimation("Walk");
+		body->ApplyLinearImpulse(b2Vec2(-value, 0), body->GetWorldCenter(), true);
+	}
+
+	virtual void MoveUp(int value) {
+		setAnimation("Walk");
+		body->ApplyLinearImpulse(b2Vec2(0, value), body->GetWorldCenter(), true);
+	}
+
+	virtual void MoveDown(int value) {
+		setAnimation("Walk");
+		body->ApplyLinearImpulse(b2Vec2(0, -value), body->GetWorldCenter(), true);
 	}
 
 	void getDamage(float damage) {
@@ -33,32 +54,51 @@ public:
 	}
 
 	void kill() {
-		animations = NULL;
 		_healht = 0;
 		_attack = 0;
 		_def = 0;
+		w->DestroyBody(body);
+		w = NULL;
+		animations = NULL;
 	}
-
-	void Init(string _name, float healht, float attack, float def) {
+	void Create(string _name, int x, int y, int width, int hight, float healht, float attack, float def, b2World *world, AnimationManager *anim) {
+		animations = anim;
+		b2PolygonShape shape;
+		shape.SetAsBox(width / 2, hight / 2);
+		b2BodyDef bdef;
+		bdef.type = b2_dynamicBody;
+		bdef.position.Set(static_cast<float32>(x + width / 2), static_cast<float32>(y + hight / 2));
+		body = world->CreateBody(&bdef);
+		body->CreateFixture(&shape, 1);
+		body->SetUserData((void*)_name.c_str());
+		w = world;
 		name = _name;
 		_healht = healht;
 		_attack = attack;
 		_def = def;
 	}
+protected:
 	AnimationManager *animations;
 	b2Body *body;
+	b2World *w;
 	int _x;
 	int _y;
 	int _width;
 	int _hight;
-private:
 	string name;
 	float _healht;
 	float _attack;
 	float _def;
-};
-
-struct MyStruct
-{
-	virtual void add() = 0;
+	void setAnimation(string name) {
+		animations->set(name);
+	}
+	void Flip(bool value) {
+		animations->flip(value);
+	}
+	void AllFlip(bool value) {
+		animations->AllFlip(value);
+	}
+	bool flip = false;
+private:
+	
 };

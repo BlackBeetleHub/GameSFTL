@@ -94,7 +94,7 @@ void Game::GameLoop()
 	x = 400;
 	y = 200;
 	Clock clock;
-	bool flip = false;
+	/*bool flip = false;
 	b2PolygonShape shape;
 	shape.SetAsBox(20 , 30);
 	b2BodyDef bdef;
@@ -102,7 +102,9 @@ void Game::GameLoop()
 	bdef.position.Set(x + 20 , y + 30);
 	b2Body *pbody = World.CreateBody(&bdef);
 	pbody->CreateFixture(&shape, 1);
-	pbody->SetUserData("player");
+	pbody->SetUserData("player");*/
+	GameActor player;
+	player.create(200,200,40,60,100,10,10,&World,&anim);
 	JumpCommand *jump = new JumpCommand();
 	InputHandler inputHandler;
 	inputHandler.bindButtonA(jump);
