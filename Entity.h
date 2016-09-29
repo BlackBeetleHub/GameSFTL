@@ -15,20 +15,23 @@ public:
 	virtual void MoveLeft(int value) {
 		if (!flip) {
 			AllFlip(true);
+			//flip = true;
 		}
 		setAnimation("Walk");
 		body->ApplyLinearImpulse(b2Vec2(value, 0), body->GetWorldCenter(), true);
 	}
 
+
 	virtual void MoveRight(int value) {
 		if (flip) {
 			AllFlip(false);
+			//flip = false;
 		}
 		setAnimation("Walk");
 		body->ApplyLinearImpulse(b2Vec2(-value, 0), body->GetWorldCenter(), true);
 	}
 
-	virtual void MoveUp(int value) {
+	void MoveUp(int value) {
 		setAnimation("Walk");
 		body->ApplyLinearImpulse(b2Vec2(0, value), body->GetWorldCenter(), true);
 	}
@@ -77,7 +80,23 @@ public:
 		_attack = attack;
 		_def = def;
 	}
+	virtual void draw(sf::RenderWindow &win) {
+		b2Vec2 pos = body->GetPosition();
+		b2Vec2 velocity = body->GetLinearVelocity();
+		if (velocity.x < 2) {
+			stay();
+		}
+		animations->draw(win, pos.x - _width / 2, pos.y - _hight / 2);
+	}
 protected:
+
+	virtual void stay() {
+		if (flip) {
+			AllFlip(false);
+		}
+		setAnimation("Stay");
+	}
+
 	AnimationManager *animations;
 	b2Body *body;
 	b2World *w;

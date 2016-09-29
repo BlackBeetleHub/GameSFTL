@@ -67,7 +67,7 @@ void Game::GameLoop()
 	world.AddObject(obj2);
 	world.AddObject(obj3);
 	world.AddObject(obj4);
-	AnimationManager anim;
+	AnimationManager *anim = new AnimationManager();
 	Texture text;
 	text.setSmooth(true);
 	if (!text.loadFromFile("sprites/evil/hero.png")) {
@@ -85,20 +85,25 @@ void Game::GameLoop()
 	n.push_back(IntRect(3, 80, 54, 48));
 	n.push_back(IntRect(69, 80, 52, 48));
 	n.push_back(IntRect(128,81,61,46));
-	anim.create("Attack", text, attack, 0.004f);
-	anim.create("Walk", text, n, 0.002f);
-	anim.create("Stay", text, stay, 0.002f);
-	anim.set("Stay");
-	anim.play();
-	Clock clock;
+	anim->create("Attack", text, attack, 0.004f);
+	anim->create("Walk", text, n, 0.002f);
+	anim->create("Stay", text, stay, 0.002f);
+	anim->set("Stay");
+	anim->play();
 	GameActor player;
-	player.create(200,200,40,60,100,10,10,&World,&anim);
-	JumpCommand *jump = new JumpCommand();
+	player.create(200, 200, 40, 60, 100, 10, 10, &World, anim);
+	Clock clock;
+	
+	
+	MoveRight *R = new MoveRight();
+	MoveLeft *L = new MoveLeft();
+	MoveUp *U = new MoveUp();
+	MoveDown *Down = new MoveDown();
 	InputHandler inputHandler;
-	inputHandler.bindButtonA(jump);
-	inputHandler.bindButtonD(jump);
-	inputHandler.bindButtonW(jump);
-	inputHandler.bindButtonS(jump);
+	inputHandler.bindButtonA(R);
+	inputHandler.bindButtonD(L);
+	inputHandler.bindButtonW(U);
+	inputHandler.bindButtonS(Down);
 	while (window.isOpen())
 	{
 		float time = static_cast<float>(clock.getElapsedTime().asMicroseconds());
@@ -119,8 +124,9 @@ void Game::GameLoop()
 			command->execute(player);
 		}
 		window.draw(fon);
-		world.draw(window , offsetx - 500, offsety -500);
-		anim.tick(time);
+		world.draw(window);
+		anim->tick(time);
+		player.draw(window);
 		for (b2Body* it = World.GetBodyList(); it != 0; it = it->GetNext()) {
 			if (it->GetUserData() == "Player") {
 				player.draw(window);

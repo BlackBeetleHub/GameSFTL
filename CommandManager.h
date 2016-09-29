@@ -37,12 +37,38 @@ public:
 class MoveLeft : public Command {
 public:
 	virtual void execute(GameActor &actor) {
-		//fire();
+		actor.MoveLeft(500);
 	}
 	virtual ~MoveLeft() {
 	}
 };
 
+class MoveRight : public Command {
+public:
+	virtual void execute(GameActor &actor) {
+		actor.MoveRight(500);
+	}
+	virtual ~MoveRight() {
+	}
+};
+
+class MoveUp : public Command {
+public:
+	virtual void execute(GameActor &actor) {
+		actor.MoveUp(-1000);
+	}
+	virtual ~MoveUp() {
+	}
+};
+
+class MoveDown : public Command {
+public:
+	virtual void execute(GameActor &actor) {
+		actor.MoveDown(-500);
+	}
+	virtual ~MoveDown() {
+	}
+};
 
 
 class InputHandler {
