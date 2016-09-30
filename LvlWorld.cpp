@@ -16,7 +16,7 @@ void LvlWorld::draw(sf::RenderWindow & window) {
 	for (int i = 0; i < terra.size(); i++) {
 		b2Vec2 pos = cam->GetPosition();
 		terra[i].sprite.setPosition(terra[i]._x - pos.x + 683 - terra[i]._width/2, terra[i]._y - pos.y - terra[i]._hight/2 + 384);
-		window.draw(terra[i].sprite);
+		window.draw(terra[i].sprite); 
 	}
 }
 
