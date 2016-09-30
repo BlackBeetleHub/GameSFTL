@@ -92,9 +92,10 @@ void Game::GameLoop()
 	anim->play();
 	GameActor player;
 	player.create(200, 200, 40, 60, 100, 10, 10, &World, anim);
+	Camera camera;
+	camera.init(&player);
+	world.bindCamera(&camera);
 	Clock clock;
-	
-	
 	MoveRight *R = new MoveRight();
 	MoveLeft *L = new MoveLeft();
 	MoveUp *U = new MoveUp();
@@ -129,7 +130,7 @@ void Game::GameLoop()
 		player.draw(window);
 		for (b2Body* it = World.GetBodyList(); it != 0; it = it->GetNext()) {
 			if (it->GetUserData() == "Player") {
-				player.draw(window);
+				//player.draw(window);
 			}
 		}
 		window.display();

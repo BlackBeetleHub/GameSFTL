@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationManager.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommandManager.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -173,6 +174,7 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationManager.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CommandManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />

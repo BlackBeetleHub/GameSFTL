@@ -14,13 +14,15 @@ void LvlWorld::scrool(int x, int y) {
 
 void LvlWorld::draw(sf::RenderWindow & window) {
 	for (int i = 0; i < terra.size(); i++) {
+		b2Vec2 pos = cam->GetPosition();
+		terra[i].sprite.setPosition(terra[i]._x - pos.x - 668, terra[i]._y - pos.x - 397);
 		window.draw(terra[i].sprite);
 	}
 }
 
 void LvlWorld::draw(sf::RenderWindow & window,float offx,float offy) {
 	for (int i = 0; i < terra.size(); i++) {
-		terra[i].sprite.setPosition(terra[i].x - offx, terra[i].y - offy);
+		terra[i].sprite.setPosition(terra[i]._x - offx, terra[i]._y - offy);
 		window.draw(terra[i].sprite);
 	}
 }
@@ -44,4 +46,6 @@ void Object::create(sf::Texture *text, int x, int y, int w, int h, int dx, int d
 	sprite.setTexture(*texture);
 	sprite.setTextureRect(sf::IntRect(x, y, w, h));
 	sprite.setPosition(dx, dy);
+	_x = dx;
+	_y = dy;
 }

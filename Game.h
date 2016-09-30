@@ -6,7 +6,7 @@
 #include<iostream>
 #include"Box2D\Box2D.h"
 #include"CommandManager.h"
-
+#include"Camera.h"
 
 using namespace sf;
 

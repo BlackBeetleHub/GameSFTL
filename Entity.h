@@ -88,6 +88,11 @@ public:
 		}
 		animations->draw(win, pos.x - _width / 2, pos.y - _hight / 2);
 	}
+
+	b2Vec2 getPosition() {
+		return body->GetPosition();
+	}
+
 protected:
 
 	virtual void stay() {
