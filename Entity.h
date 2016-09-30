@@ -86,11 +86,13 @@ public:
 		if (velocity.x < 2) {
 			stay();
 		}
-		animations->draw(win, pos.x - _width / 2, pos.y - _hight / 2);
+		//win, pos.x - _width / 2, pos.y - _hight / 2
+		animations->draw(win, 683 - _width / 2, 384 - _hight / 2);
 	}
 
 	b2Vec2 getPosition() {
-		return body->GetPosition();
+		b2Vec2 pos = body->GetPosition();
+		return pos;
 	}
 
 protected:
