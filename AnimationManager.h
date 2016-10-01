@@ -35,6 +35,10 @@ public:
 		}
 	}
 
+	string NameCurrentAnimation() {
+		return currentAnimation;
+	}
+
 	void play() { isPlay = true; }
 
 	void stop() { isPlay = false; }

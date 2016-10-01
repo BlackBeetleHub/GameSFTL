@@ -12,21 +12,44 @@ public:
 		return name;
 	}
 
+	void SomeAction(bool value){
+		Action = value;
+	}
+
+	virtual void MoveLeftAttack(int value) {
+		animations->flip(false);
+		setAnimation("Attack");
+		body->ApplyLinearImpulseToCenter(b2Vec2(value, 0), true);
+	}
+
+	virtual void MoveRightAttack(int value) {
+		animations->flip(true);
+		setAnimation("Attack");
+		body->ApplyLinearImpulseToCenter(b2Vec2(-value, 0), true);
+	}
+
 	virtual void MoveLeft(int value) {
+		/*
 		if (!flip) {
 			AllFlip(true);
-			//flip = true;
+			flip = true;
 		}
+		*/
+		animations->flip(false);
 		setAnimation("Walk");
 		body->ApplyLinearImpulse(b2Vec2(value, 0), body->GetWorldCenter(), true);
 	}
 
+	virtual void Attack(int value) {
+		setAnimation("Attack");
+	}
 
 	virtual void MoveRight(int value) {
-		if (flip) {
-			AllFlip(false);
-			//flip = false;
-		}
+		//if (flip) {
+		//	AllFlip(false);
+		//	flip = false;
+	//	}
+		animations->flip(true);
 		setAnimation("Walk");
 		body->ApplyLinearImpulse(b2Vec2(-value, 0), body->GetWorldCenter(), true);
 	}
@@ -79,11 +102,14 @@ public:
 		_healht = healht;
 		_attack = attack;
 		_def = def;
+		_width = width;
+		_hight = hight;
 	}
+
 	virtual void draw(sf::RenderWindow &win) {
 		b2Vec2 pos = body->GetPosition();
 		b2Vec2 velocity = body->GetLinearVelocity();
-		if (velocity.x < 2) {
+		if (velocity.x == 0 && animations->NameCurrentAnimation()=="Walk") {
 			stay();
 		}
 		//win, pos.x - _width / 2, pos.y - _hight / 2
@@ -95,13 +121,23 @@ public:
 		return pos;
 	}
 
+	int getWidth() {
+		return _width;
+	}
+
+	int getHight() {
+		return _hight;
+	}
+
 protected:
 
 	virtual void stay() {
-		if (flip) {
-			AllFlip(false);
+		if(!Action){
+			if (flip) {
+				AllFlip(false);
+			}
+			setAnimation("Stay");
 		}
-		setAnimation("Stay");
 	}
 
 	AnimationManager *animations;
@@ -125,6 +161,7 @@ protected:
 		animations->AllFlip(value);
 	}
 	bool flip = false;
+	bool Action = false;
 private:
 	
 };

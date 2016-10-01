@@ -59,8 +59,8 @@ void Game::GameLoop()
 	setWall(600, 200, 161, 25);
 	setWall(1000, 600, 161, 25);
 	//setWall(0, 0, 1, 768);
-	setWall(0, 768, 13660, 1);
-	setWall(0, 0, 13660, 1);
+	setWall(-6830, 768, 13660, 1);
+	setWall(-6830, -400, 13660, 1);
 	//setWall(1366, 0, 1, 768);
 	LvlWorld world;
 	world.AddObject(obj1);
@@ -94,17 +94,24 @@ void Game::GameLoop()
 	player.create(200, 200, 40, 60, 100, 10, 10, &World, anim);
 	Camera camera;
 	camera.init(&player);
+	camera.bindSizeWindow(1366, 768);
 	world.bindCamera(&camera);
 	Clock clock;
 	MoveRight *R = new MoveRight();
 	MoveLeft *L = new MoveLeft();
 	MoveUp *U = new MoveUp();
 	MoveDown *Down = new MoveDown();
+	Attack *A = new Attack();
+	MoveAttackRight *AD = new MoveAttackRight();
+	MoveAttackLeft *AE = new MoveAttackLeft();
 	InputHandler inputHandler;
 	inputHandler.bindButtonA(R);
 	inputHandler.bindButtonD(L);
 	inputHandler.bindButtonW(U);
 	inputHandler.bindButtonS(Down);
+	inputHandler.bindButtonE(A);
+	inputHandler.bindButtonsE_A(AE);
+	inputHandler.bindButtonsE_D(AD);
 	while (window.isOpen())
 	{
 		float time = static_cast<float>(clock.getElapsedTime().asMicroseconds());
@@ -136,4 +143,11 @@ void Game::GameLoop()
 		window.display();
 		window.clear(Color(255,255,255));
 	}
+	delete R;
+	delete L;
+	delete U;
+	//delete A;
+	delete Down;
+	delete AD;
+	delete AE;
 }

@@ -12,8 +12,8 @@ public:
 
 class Command{
 public:
-	virtual ~Command();
-	virtual void execute(GameActor &actor) = 0;
+virtual ~Command();
+virtual void execute(GameActor &actor) = 0;
 };
 
 class JumpCommand : public Command {
@@ -27,7 +27,7 @@ public:
 
 class FireCommand : public Command {
 public:
-	virtual void execute(GameActor &actor){
+	virtual void execute(GameActor &actor) {
 		//fire();
 	}
 	virtual ~FireCommand() {
@@ -70,6 +70,28 @@ public:
 	}
 };
 
+class Attack : public Command {
+	virtual void execute(GameActor &actor) {
+		actor.Attack(10);
+	}
+	virtual ~Attack() {
+
+	}
+};
+
+class MoveAttackRight : public Command {
+	virtual void execute(GameActor &actor) {
+		actor.MoveRightAttack(-500);
+		
+	}
+	
+};
+
+class MoveAttackLeft : public Command {
+	virtual void execute(GameActor &actor) {
+		actor.MoveLeftAttack(500);
+	}
+};
 
 class InputHandler {
 public:
@@ -78,7 +100,10 @@ public:
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) return buttonD_;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) return buttonA_;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) return buttonS_;
-		return NULL;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) return buttonE_;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) buttons_E_D_;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) buttons_E_A_;
+			return NULL;
 	}
 
 	void bindButtonA(Command *com) {
@@ -102,6 +127,12 @@ public:
 	void bindButtonF(Command *com) {
 		buttonF_ = com;
 	}
+	void bindButtonsE_D(Command *com){
+		buttons_E_D_ = com;
+	}
+	void bindButtonsE_A(Command *com){
+		buttons_E_A_ = com;
+	}
     InputHandler(Command* W, Command* D, Command* A, Command* S, Command* E, Command* F);
 	InputHandler();
 private:
@@ -112,6 +143,8 @@ private:
 	Command* buttonF_;
 	Command* buttonE_;
 	Command* buttonR_;
+	Command* buttons_E_D_;
+	Command* buttons_E_A_;
 };
 
 //Command* InputHandler::handleInputssssss()

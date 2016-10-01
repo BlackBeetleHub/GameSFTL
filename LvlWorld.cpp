@@ -15,7 +15,9 @@ void LvlWorld::scrool(int x, int y) {
 void LvlWorld::draw(sf::RenderWindow & window) {
 	for (int i = 0; i < terra.size(); i++) {
 		b2Vec2 pos = cam->GetPosition();
-		terra[i].sprite.setPosition(terra[i]._x - pos.x + 683 + 20, terra[i]._y - pos.y  + 384 + 30);
+		Vector2f res = cam->TarGetCenter(terra[i]._x, terra[i]._y);
+		// It's try: terra[i]._x - pos.x + 683, terra[i]._y - pos.y  + 384;
+		terra[i].sprite.setPosition(res);
 		window.draw(terra[i].sprite);
 	}
 }
