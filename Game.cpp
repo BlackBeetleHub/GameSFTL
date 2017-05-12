@@ -50,14 +50,10 @@ void Game::GameLoop()
 	fon.setTexture(fontext);
 	fon.setTextureRect(IntRect(0,0,1366,768));
 	fon.setPosition(0, 0);
-	obj1.create(&objtext, 95, 0, 161, 25, 400,400);
-	obj2.create(&objtext, 95, 0, 161, 25, 200 , 600);
-	obj3.create(&objtext, 95, 0, 161, 25 , 600 , 200);
-	obj4.create(&objtext, 95, 0, 161, 25, 1000, 600);
-	setWall(400, 400, 161, 25);
-	setWall(200, 600, 161, 25);
-	setWall(600, 200, 161, 25);
-	setWall(1000, 600, 161, 25);
+	obj1.Create(&objtext, "block", 95, 0, 161, 25, 400,400,b2_staticBody,&World);
+	obj2.Create(&objtext, "block", 95, 0, 161, 25, 200 , 600, b2_staticBody, &World);
+	obj3.Create(&objtext, "block", 95, 0, 161, 25 , 600 , 200, b2_staticBody, &World);
+	obj4.Create(&objtext, "block", 95, 0, 161, 25, 1000, 600, b2_staticBody, &World);
 	//setWall(0, 0, 1, 768);
 	setWall(-6830, 768, 13660, 1);
 	setWall(-6830, -400, 13660, 1);
@@ -68,6 +64,7 @@ void Game::GameLoop()
 	world.AddObject(obj3);
 	world.AddObject(obj4);
 	AnimationManager *anim = new AnimationManager();
+	AnimationManager *animBot = new AnimationManager();
 	Texture text;
 	text.setSmooth(true);
 	if (!text.loadFromFile("sprites/evil/hero.png")) {
@@ -90,12 +87,23 @@ void Game::GameLoop()
 	anim->create("Stay", text, stay, 0.002f);
 	anim->set("Stay");
 	anim->play();
+	animBot->create("Attack", text, attack, 0.004f);
+	animBot->create("Walk", text, n, 0.002f);
+	animBot->create("Stay", text, stay, 0.002f);
+	animBot->set("Stay");
+	animBot->play();
 	GameActor player;
-	player.create(200, 200, 40, 60, 100, 10, 10, &World, anim);
+	//Entity bot;
+	//bot.Create("Bill",100,100,20,30,10,1,2,&World,animBot);
+	player.Create(200, 200, 40, 60, 100, 10, 10, &World, anim);
 	Camera camera;
 	camera.init(&player);
 	camera.bindSizeWindow(1366, 768);
 	world.bindCamera(&camera);
+	Object testo;
+	testo.Create(&fontext, "Testo", 0, 0, 30, 30, 200, 200, b2_dynamicBody, &World);
+	world.AddObject(testo);
+	//world.AddObject(bot);
 	Clock clock;
 	MoveRight *R = new MoveRight();
 	MoveLeft *L = new MoveLeft();
@@ -121,6 +129,13 @@ void Game::GameLoop()
 		if (time > 20) {
 			time = 20;
 		}
+
+		if (Mouse::isButtonPressed(Mouse::Right)) {
+			Vector2i mousePos = Mouse::getPosition();
+			Object tes;
+			tes.Create(&fontext, "Testo", 0, 0, 30, 30, mousePos.x, mousePos.y, b2_dynamicBody, &World);
+			world.AddObject(tes);
+		}
 		while (window.pollEvent(even))
 		{
 			if (even.type == Event::Closed)
@@ -134,6 +149,7 @@ void Game::GameLoop()
 		window.draw(fon);
 		world.draw(window);
 		anim->tick(time);
+		animBot->tick(time);
 		player.draw(window);
 		for (b2Body* it = World.GetBodyList(); it != 0; it = it->GetNext()) {
 			if (it->GetUserData() == "Player") {

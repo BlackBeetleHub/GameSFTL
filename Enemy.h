@@ -4,8 +4,6 @@
 class Enemy : public Entity
 {
 public:
-
-
 	Enemy();
 	~Enemy();
 protected:

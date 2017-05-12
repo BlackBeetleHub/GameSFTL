@@ -2,15 +2,40 @@
 #include"AnimationManager.h"
 #include"Box2D\Box2D.h"
 
-class Entity
-{
+class Object {
+public:
+	b2Vec2 getPosition() {
+		b2Vec2 pos = body->GetPosition();
+		pos.x -= _width / 2;
+		pos.y -= _hight / 2;
+		return pos;
+	}
+	virtual void Create(sf::Texture *text, string name, int x, int y, int w, int h, int dx, int dy, b2BodyType type , b2World *world);
+	virtual void draw(sf::RenderWindow &win, int x, int y) {
+		sprite.setPosition(x, y);
+		win.draw(sprite);
+	}
+	string getName() {
+		return _name;
+	}
+protected:
+	b2Body *body;
+	string _name;
+private:
+	int _x;
+	int _y;
+	int _width;
+	int _hight;
+	sf::Sprite sprite;
+	sf::Texture *texture;
+};
+
+
+
+class Entity: public Object {
 public:
 	Entity();
 	~Entity();
-
-	string getName() {
-		return name;
-	}
 
 	void SomeAction(bool value){
 		Action = value;
@@ -87,18 +112,19 @@ public:
 		w = NULL;
 		animations = NULL;
 	}
-	void Create(string _name, int x, int y, int width, int hight, float healht, float attack, float def, b2World *world, AnimationManager *anim) {
+	virtual void Create(string name, int x, int y, int width, int hight, float healht, float attack, float def, b2World *world, AnimationManager *anim) {
 		animations = anim;
 		b2PolygonShape shape;
 		shape.SetAsBox(width / 2, hight / 2);
 		b2BodyDef bdef;
 		bdef.type = b2_dynamicBody;
+		bdef.fixedRotation = true;
 		bdef.position.Set(static_cast<float32>(x + width / 2), static_cast<float32>(y + hight / 2));
 		body = world->CreateBody(&bdef);
 		body->CreateFixture(&shape, 1);
-		body->SetUserData((void*)_name.c_str());
+		body->SetUserData((void*)name.c_str());
 		w = world;
-		name = _name;
+		_name = name;
 		_healht = healht;
 		_attack = attack;
 		_def = def;
@@ -106,19 +132,14 @@ public:
 		_hight = hight;
 	}
 
-	virtual void draw(sf::RenderWindow &win) {
+	virtual void draw(sf::RenderWindow &win,int x, int y) {
 		b2Vec2 pos = body->GetPosition();
 		b2Vec2 velocity = body->GetLinearVelocity();
 		if (velocity.x == 0 && animations->NameCurrentAnimation()=="Walk") {
 			stay();
 		}
 		//win, pos.x - _width / 2, pos.y - _hight / 2
-		animations->draw(win, 683 - _width / 2, 384 - _hight / 2);
-	}
-
-	b2Vec2 getPosition() {
-		b2Vec2 pos = body->GetPosition();
-		return pos;
+		animations->draw(win, x, y);
 	}
 
 	int getWidth() {
@@ -141,13 +162,9 @@ protected:
 	}
 
 	AnimationManager *animations;
-	b2Body *body;
 	b2World *w;
-	int _x;
-	int _y;
 	int _width;
 	int _hight;
-	string name;
 	float _healht;
 	float _attack;
 	float _def;

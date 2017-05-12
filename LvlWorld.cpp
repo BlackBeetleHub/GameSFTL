@@ -6,50 +6,22 @@ LvlWorld::LvlWorld()
 {
 }
 
-void LvlWorld::scrool(int x, int y) {
-	for (int i = 0; i < terra.size(); i++) {
-		terra[i].sprite.setPosition(terra[i].sprite.getPosition().x + x, terra[i].sprite.getPosition().y + y);
-	}
-}
-
 void LvlWorld::draw(sf::RenderWindow & window) {
 	for (int i = 0; i < terra.size(); i++) {
-		b2Vec2 pos = cam->GetPosition();
-		Vector2f res = cam->TarGetCenter(terra[i]._x, terra[i]._y);
+		b2Vec2 pos = terra[i].getPosition();
+		Vector2f res = cam->TarGetCenter(pos.x, pos.y);
 		// It's try: terra[i]._x - pos.x + 683, terra[i]._y - pos.y  + 384;
-		terra[i].sprite.setPosition(res);
-		window.draw(terra[i].sprite);
+		terra[i].draw(window, res.x, res.y);
 	}
 }
-
-void LvlWorld::draw(sf::RenderWindow & window,float offx,float offy) {
-	for (int i = 0; i < terra.size(); i++) {
-		terra[i].sprite.setPosition(terra[i]._x - offx , terra[i]._y - offy );
-		window.draw(terra[i].sprite);
-	}
-}
-
-
 
 bool LvlWorld::AddObject(Object obj) {
 	terra.push_back(obj);
 	return true;
 }
 
-
-
 LvlWorld::~LvlWorld()
 {
 }
 
 
-void Object::create(sf::Texture *text, int x, int y, int w, int h, int dx, int dy) {
-	texture = text;
-	sprite.setTexture(*texture);
-	sprite.setTextureRect(sf::IntRect(x, y, w, h));
-	sprite.setPosition(dx, dy);
-	_x = dx;
-	_y = dy;
-	_width = w;
-	_hight = h;
-}
